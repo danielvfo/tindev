@@ -1,7 +1,8 @@
 import React from 'react';
+import logo from '../assets/tindev.svg';
 
-export default function Login() {
+export default function Main({ match }) {
   return(
-    <h1>Hello!</h1>
+    <h1>{match.params.id}</h1>
   );
 };
