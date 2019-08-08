@@ -1,9 +1,10 @@
 import React from 'react';
+import logo from './assets/tindev.svg';
 import './App.css';
 
 function App() {
   return (
-    <h1>Tindeve!</h1>
+    <img src={logo} alt="Tindev" />
   );
 }
 
