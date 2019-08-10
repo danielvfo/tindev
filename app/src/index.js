@@ -1,14 +1,9 @@
 import React from 'react';
-import {
-  View,
-  StyleSheet,
-  Text,
-} from 'react-native';
-import Login from './pages/Login';
+import Routes from './routes';
 
 const App = () => {
   return (
-    <Login />
+    <Routes />
   );
 };
 
