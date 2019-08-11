@@ -128,6 +128,7 @@ const styles = StyleSheet.create({
   avatar: {
     flex: 1,
     height: 300,
+    backgroundColor: '#999999',
   },
   logo: {
     marginTop: 30,
