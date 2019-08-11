@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
+import io from 'socket.io-client';
 import logo from '../assets/tindev.svg';
 import like from '../assets/like.svg';
 import dislike from '../assets/dislike.svg';
@@ -17,6 +18,10 @@ export default function Main({ match }) {
       setUsers(response.data);
     }
     loadUsers();
+  }, [match.params.id]);
+
+  useEffect(() => {
+    const socket = io('http://localhost:3333');
   }, [match.params.id]);
 
   async function handleLike(id) {
