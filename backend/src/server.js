@@ -18,6 +18,12 @@ mongoose.connect('mongodb+srv://tindev:tindevloko@dancluster-logmj.gcp.mongodb.n
   useNewUrlParser: true
 });
 
+httpServer.use((req, res, next) => {
+  req.io = io;
+  req.connectedUsers = connectedUsers;
+  return next();
+});
+
 httpServer.use(cors());
 httpServer.use(express.json());
 httpServer.use(routes);
