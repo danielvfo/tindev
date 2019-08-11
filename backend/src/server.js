@@ -7,8 +7,11 @@ const httpServer = express();
 const server = require('http').Server(httpServer);
 const io = require('socket.io');
 
+const connectedUsers = {};
+
 io.on('connection', socket => {
-  console.log('Nova conexão', socket.id);
+  const { user } = socket.handshake.query;
+  connectedUsers[user] = socket.id;
 });
 
 mongoose.connect('mongodb+srv://tindev:tindevloko@dancluster-logmj.gcp.mongodb.net/tindev?retryWrites=true&w=majority', {
