@@ -1,50 +1,85 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
+import AsyncStorage from '@react-native-community/async-storage';
 import {
   View, SafeAreaView, StyleSheet, Text, Image, TouchableOpacity,
 } from 'react-native';
 import logo from '../assets/logo.png';
 import like from '../assets/like.png';
 import dislike from '../assets/dislike.png';
+import api from '../services/api';
 
-const Main = () => {
+export default function Main({ navigation }) {
+  const id = navigation.getParam('user');
+  const [users, setUsers] = useState([]);
+
+  useEffect(() => {
+    async function loadUsers() {
+      const response = await api.get('/devs', {
+        headers: { user: id },
+      });
+      setUsers(response.data);
+    }
+    loadUsers();
+  }, [id]);
+
+  async function handleLike() {
+    const [user, ...rest] = users;
+
+    await api.post(`/devs/${user._id}/likes`, null, {
+      headers: { user: id },
+    });
+
+    setUsers(rest);
+  }
+
+  async function handleDislike() {
+    const [user, ...rest] = users;
+
+    await api.post(`/devs/${user._id}/dislikes`, null, {
+      headers: { user: id },
+    });
+
+    setUsers(rest);
+  }
+
+  async function handleLogout() {
+    await AsyncStorage.clear();
+    navigation.navigate('Login');
+  }
+
   return (
     <SafeAreaView style={styles.container}>
-      <Image style={styles.logo} source={logo}></Image>
+      <TouchableOpacity onPress={handleLogout}>
+        <Image style={styles.logo} source={logo}></Image>
+      </TouchableOpacity>
 
       <View style={styles.cardsContainer}>
-        <View style={[styles.card, { zIndex: 3 }]}>
-          <Image style={styles.avatar} source={{ uri: 'https://avatars3.githubusercontent.com/u/5642214?v=4' }}></Image>
-          <View style={styles.footer}>
-            <Text style={styles.name}>Daniel</Text>
-            <Text numberOfLines={3} style={styles.bio}>Oloco Bicho!</Text>
-          </View>
-        </View>
-
-        <View style={[styles.card, { zIndex: 2 }]}>
-          <Image style={styles.avatar} source={{ uri: 'https://avatars3.githubusercontent.com/u/5642214?v=4' }}></Image>
-          <View style={styles.footer}>
-            <Text style={styles.name}>Daniel</Text>
-            <Text numberOfLines={3} style={styles.bio}>Oloco Bicho!</Text>
-          </View>
-        </View>
-
-        <View style={[styles.card, { zIndex: 1 }]}>
-          <Image style={styles.avatar} source={{ uri: 'https://avatars3.githubusercontent.com/u/5642214?v=4' }}></Image>
-          <View style={styles.footer}>
-            <Text style={styles.name}>Daniel</Text>
-            <Text numberOfLines={3} style={styles.bio}>Oloco Bicho!</Text>
-          </View>
-        </View>
+        { users.length === 0
+          ? <Text style={styles.empty}>Acabou =(</Text>
+          : (
+            users.map((user, index) => (
+              <View key={user._id} style={[styles.card, { zIndex: users.length - index }]}>
+                <Image style={styles.avatar} source={{ uri: user.avatar }}></Image>
+                <View style={styles.footer}>
+                  <Text style={styles.name}>{user.name}</Text>
+                  <Text numberOfLines={3} style={styles.bio}>{user.bio}</Text>
+                </View>
+              </View>
+            ))
+          )
+        }
       </View>
 
-      <View style={styles.buttonsContainer}>
-        <TouchableOpacity style={styles.button}>
-          <Image source={dislike}></Image>
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.button}>
-          <Image source={like}></Image>
-        </TouchableOpacity>
-      </View>
+      { users.length > 0 && (
+        <View style={styles.buttonsContainer}>
+          <TouchableOpacity style={styles.button} onPress={handleDislike}>
+            <Image source={dislike}></Image>
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.button} onPress={handleLike}>
+            <Image source={like}></Image>
+          </TouchableOpacity>
+        </View>
+      )}
     </SafeAreaView>
   );
 };
@@ -118,6 +153,10 @@ const styles = StyleSheet.create({
       height: 2,
     }
   },
+  empty: {
+    alignSelf: 'center',
+    color: '#999999',
+    fontSize: 24,
+    fontWeight: 'bold',
+  },
 });
-
-export default Main;

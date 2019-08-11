@@ -6,7 +6,7 @@ import {
 import logo from '../assets/logo.png';
 import api from '../services/api';
 
-const Login = ({ navigation }) => {
+export default function Login({ navigation }) {
   const [ user, setUser ] = useState('');
 
   useEffect(() => {
@@ -21,7 +21,7 @@ const Login = ({ navigation }) => {
     const response = await api.post('/devs', { username: user });
     const { _id } = response.data;
     await AsyncStorage.setItem('user', _id);
-    navigation.navigate('Main', { _id });
+    navigation.navigate('Main', { user: _id });
   }
 
   return (
@@ -83,5 +83,3 @@ const styles = StyleSheet.create({
     fontSize: 16,
   },
 });
-
-export default Login;
