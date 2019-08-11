@@ -5,7 +5,7 @@ const cors = require('cors');
 
 const httpServer = express();
 const server = require('http').Server(httpServer);
-const io = require('socket.io');
+const io = require('socket.io')(server);
 
 const connectedUsers = {};
 
